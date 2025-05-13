@@ -19,3 +19,13 @@ This project demonstrates how to implement OAuth 2.0 authentication in a Node.js
 - **OAuth 2.0 Provider** (e.g., Google, GitHub, etc.)
 - **Express-Session**
 - **Dotenv**
+
+
+## ⚙️ Setup and Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/oauth-implementation.git
+   cd oauth-implementation
+npm install
+
