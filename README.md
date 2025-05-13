@@ -27,5 +27,17 @@ This project demonstrates how to implement OAuth 2.0 authentication in a Node.js
    ```bash
    git clone https://github.com/yourusername/oauth-implementation.git
    cd oauth-implementation
-npm install
+   npm install
+
+
+   PORT=3000
+SESSION_SECRET=your_session_secret
+CLIENT_ID=your_oauth_client_id
+CLIENT_SECRET=your_oauth_client_secret
+CALLBACK_URL=http://localhost:3000/auth/provider/callback
+
+npm start
+http://localhost:3000
+
+
 
