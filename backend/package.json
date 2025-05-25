@@ -1,24 +1,33 @@
 {
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "build": "echo 'No build step needed for plain JS'",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "Gayatri",
+  "license": "MIT",
+  "description": "",
   "dependencies": {
     "axios": "^1.7.3",
     "bcrypt": "^5.1.1",
+    "chalk": "^5.4.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-session": "^1.18.1",
     "googleapis": "^140.0.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.2",
     "nodemon": "^3.1.10",
+    "passport": "^0.7.0",
+    "passport-facebook": "^3.0.0",
+    "passport-github": "^1.1.0",
+    "passport-oauth2": "^1.8.0",
     "validator": "^13.12.0"
-  },
-  "name": "backend",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "start": "nodemon index.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  }
 }
