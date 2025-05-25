@@ -1,16 +1,41 @@
-const express = require('express');
-const cors = require('cors');
-const AppError = require('./utils/appError'); // Import AppError
-require('dotenv').config();
-require('./models/dbConnect'); // Ensure database connection is set up
-const authRoutes = require('./routes/authRoutes'); // Import authRoutes
+import express from 'express';
+import cors from 'cors';
+import chalk from 'chalk';
+import dotenv from 'dotenv';
+import session from 'express-session';
+import passport from 'passport';
+import './config/dbConnect.js';
+import AppError from './utils/appError.js';
+import authRoutes from './routes/authRoutes.js';
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+}));
 
-// Attach authRoutes middleware
+app.use('/', (req, res, next) => {
+    if (req.originalUrl === '/') {
+        res.redirect('/auth');
+    } else {
+        next();
+    }
+});
+
+app.use(
+    session({
+        secret: process.env.JWT_SECRET || '$2a$07$zw5Y/ksc9Goq/EhJuw7lXe3dddswyIHIDmEbtujnnCG/1Io6LP7di',
+        resave: false,
+        saveUninitialized: true,
+    })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 app.use('/auth', authRoutes);
 
 // Handle undefined routes
@@ -28,29 +53,28 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-    console.log(`Server is running on ${PORT}`);
+const httpServer = app.listen(PORT, () => {
+    console.clear();
+    console.log(`${chalk.green.bold('\n=========================================')}`);
+    console.log(`${chalk.green.bold('🚀 Server Status: ')}${chalk.cyan.bold('Online')}`);
+    console.log(`${chalk.green.bold('🌐 Listening on: ')}${chalk.yellow.underline(`http://localhost:${PORT}`)}`);
+    console.log(`${chalk.green.bold('📅 Started at: ')}${chalk.magenta(new Date().toLocaleString())}`);
+    console.log(`${chalk.green.bold('=========================================\n')}`);
 });
 
+// Handle server close event
+httpServer.on('close', () => {
+  console.log(chalk.red.bold('\n========================================='));
+  console.log(chalk.red.bold('🛑 Server Status: ') + chalk.yellow.bold('Offline'));
+  console.log(chalk.red.bold('🔔 Server has been closed.'));
+  console.log(chalk.red.bold('=========================================\n'));
+});
 
-
-
-
-// const express = require('express');
-// const cors = require('cors');
-// const app = express();
-// require('dotenv').config();
-// require('./models/dbConnect');
-// const authRoutes = require('./routes/authRoutes');
-// const PORT = process.env.PORT || 8080;
-
-// app.use(cors());
-// app.use('/auth/', authRoutes); // <- NEW LINE
-
-// app.all('*', (req, res, next) => {
-//     next(new AppError(`Can't find ${req.originalUrl} on the server`, 404));
-// });
-
-// app.listen(PORT, () => {
-//     console.log(`Server is running on ${PORT}`)
-// })
+// Graceful shutdown on Ctrl+C
+process.on('SIGINT', () => {
+  console.log(chalk.blue.bold('Gracefully shutting down the server...'));
+  httpServer.close(() => {
+    console.log(chalk.blue.bold('Server shut down complete.'));
+    process.exit(0);
+  });
+});

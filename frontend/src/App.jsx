@@ -1,33 +1,51 @@
-import './App.css'
+import { useState, useEffect } from "react";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import GoogleLogin from './GoogleLogin';
-import {BrowserRouter, Route, Routes, Navigate} from 'react-router-dom';
-import Dashboard from './Dashboard';
-import { useState } from 'react';
-import RefrshHandler from './RefreshHandler';
-import NotFound from './NotFound';
+import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
+import RefreshHandler from "./components/utils/RefreshHandler";
+import NotFound from "./components/common/Error404";
+import ThirdPartyOAuth from "./components/ThirdPartyAuth/ThirdPartyOAuth";
 
 function App() {
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
-	const GoogleWrapper = ()=>(
-		<GoogleOAuthProvider clientId="929755798545-4lrr6gm6h4iof48ti07om89t3rq0lkjb.apps.googleusercontent.com">
-			<GoogleLogin></GoogleLogin>
-		</GoogleOAuthProvider>
-	)
-	const PrivateRoute = ({ element }) => {
-		return isAuthenticated ? element : <Navigate to="/login" />
-	}
-	return (
-		<BrowserRouter>
-		    <RefrshHandler setIsAuthenticated={setIsAuthenticated} />
-			<Routes>
-				<Route path="/login" element={<GoogleWrapper />} />
-				<Route path="/" element={<Navigate to="/login" />} />
-				<Route path='/dashboard' element={<PrivateRoute element={<Dashboard/>}/>}/>
-				<Route path="*" element={<NotFound/>} />
-			</Routes>
-	</BrowserRouter>
-	);
+  const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const userInfo = localStorage.getItem("user-info");
+    const authMode = localStorage.getItem("authMode");
+    setIsAuthenticated(!!userInfo);
+  }, []);
+
+  // Function to handle authentication updates
+  const handleAuthentication = (userInfo) => {
+    if (userInfo) {
+      localStorage.setItem("user-info", JSON.stringify(userInfo));
+      setIsAuthenticated(true);
+    } else {
+      localStorage.removeItem("user-info");
+      setIsAuthenticated(false);
+    }
+  };
+
+  const PrivateRoute = ({ element }) => {
+    return isAuthenticated ? element : <Navigate to="/" />;
+  };
+
+  return (
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <BrowserRouter>
+        <RefreshHandler setIsAuthenticated={setIsAuthenticated} />
+        <Routes>
+          <Route path="/" element={<Home setIsAuthenticated={handleAuthentication} />}/>
+          {/* <Route path="/" element={<Navigate to="/login" />} /> */}
+          <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />}/>
+          <Route path="/auth0/authentic" element={<ThirdPartyOAuth/>} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </GoogleOAuthProvider>
+  );
 }
 
-export default App
+export default App;
