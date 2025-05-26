@@ -9,7 +9,7 @@ This project demonstrates how to implement OAuth 2.0 authentication in a Node.js
 - Secure login using third-party providers
 - User session management
 - Environment-based configuration
-- Simple and clean folder structure
+- Simple and clean folder structure.
 
 ## 🛠 Tech Stack
 
