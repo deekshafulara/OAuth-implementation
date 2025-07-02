@@ -1,7 +1,7 @@
 # OAuth-implementation
 
 
-This project demonstrates how to implement OAuth 2.0 authentication in a Node.js application. OAuth allows users to log in using third-party providers (like Google, GitHub, etc.) without creating a new account for your ap.
+This project demonstrates how to implement OAuth 2.0 authentication in a Node.js application. OAuth allows users to log in using third-party providers (like Google, GitHub, etc.) without creating a new account for your app.
 
 ## 🚀 Features
 
